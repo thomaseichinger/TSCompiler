@@ -8,19 +8,27 @@ QT       -= core
 
 QT       -= gui
 
+COCOTARGET.target = Parser.cpp Parser.h Scanner.cpp Scanner.h
+COCOTARGET.commands = ./CoCo/Coco ./src/TSCompiler.atg
+COCOTARGET.depends = TSCompiler.atg
+
 TARGET = TSCompiler
+TARGET.depends = COCOTARGET
 CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += src/main.cpp \
+    src/Parser.cpp \
+    src/Scanner.cpp
 
 OTHER_FILES += \
-    Parser.frame \
-    Scanner.frame \
-    Coco.atg
+    src/Parser.frame \
+    src/Scanner.frame \
+    src/TSCompiler.atg
 
-#HEADERS +=
+HEADERS += src/Parser.h \
+    src/Scanner.h
 
