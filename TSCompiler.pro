@@ -22,7 +22,9 @@ TEMPLATE = app
 
 SOURCES += src/main.cpp \
     src/Parser.cpp \
-    src/Scanner.cpp
+    src/Scanner.cpp \
+    src/DFA.cpp \
+    src/Tab.cpp
 
 OTHER_FILES += \
     src/Parser.frame \
@@ -30,5 +32,7 @@ OTHER_FILES += \
     src/TSCompiler.atg
 
 HEADERS += src/Parser.h \
-    src/Scanner.h
+    src/Scanner.h \
+    src/DFA.h \
+    src/Tab.h
 
