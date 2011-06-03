@@ -18,38 +18,45 @@ TOKENS
   number = digit {digit}.
 
 COMMENTS FROM "/*" TO "*/" NESTED
-COMMENTS FROM "//" TO cr lf
-COMMENTS FROM "##" TO cr lf
+COMMENTS FROM "//" TO lf		//win: TO cr lf
+COMMENTS FROM "##" TO lf		//win: TO cr lf
 
 IGNORE cr + lf + tab
 
+/*------------------------------------------------------------------------*/
+
 PRODUCTIONS
 
+/*------------------------------------------------------------------------*/
 VersionNum = number { "." number }.
 
+/*------------------------------------------------------------------------*/
 String = '"' { ident | number } '"' .
 
+/*------------------------------------------------------------------------*/
 VariableDecl =  ( ident | String ) .
 
+/*------------------------------------------------------------------------*/
 ParameterDecl = "(" ( { ident ( "," | ")" ) } | ")" ) .
 
+/*------------------------------------------------------------------------*/
 FunctionBody = {ident} .
 
-FunctionDecl =  ParameterDecl "->" FunctionBody "<-".
+/*------------------------------------------------------------------------*/
+FunctionDecl =  ParameterDecl "->" FunctionBody  "<-".
 
-ObjectMemDecl = ident ":" ident .
+/*------------------------------------------------------------------------*/
+ObjectMemDecl = ident ":" ( ident | String ) .
 
+/*------------------------------------------------------------------------*/
 ObjectDecl = "$" { ObjectMemDecl } "$" .
 
+/*------------------------------------------------------------------------*/
 Object = ident "=" ( VariableDecl | FunctionDecl | ObjectDecl ) .
-
-/*//FunctionDecl = ident "=" "(" {ident} ")" "->" ident. // last ident should really be a "functionbody"
-//ObjectDecl = ident "=>" { ident ":" ident }.*/
 
 /*------------------------------------------------------------------------*/
 TSCompiler
 = "TrivialScript" VersionNum 
-{ Object } .
-/*{ VariableDecl | FunctionDecl | ObjectDecl }.*/
+	{ Object } .
 
 END TSCompiler.

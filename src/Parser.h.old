@@ -62,6 +62,8 @@ public:
 	void ParameterDecl();
 	void FunctionBody();
 	void FunctionDecl();
+	void ObjectMemDecl();
+	void ObjectDecl();
 	void Object();
 	void TSCompiler();
 

@@ -420,8 +420,8 @@ Scanner::~Scanner() {
 void Scanner::Init() {
 	EOL    = '\n';
 	eofSym = 0;
-	maxT = 12;
-	noSym = 12;
+	maxT = 14;
+	noSym = 14;
 	int i;
 	for (i = 65; i <= 90; ++i) start.set(i, 1);
 	for (i = 97; i <= 122; ++i) start.set(i, 1);
@@ -433,9 +433,11 @@ void Scanner::Init() {
 	start.set(41, 7);
 	start.set(45, 8);
 	start.set(60, 10);
-	start.set(61, 12);
+	start.set(58, 12);
+	start.set(36, 13);
+	start.set(61, 14);
 		start.set(Buffer::EoF, -1);
-	keywords.set(L"TrivialScript", 11);
+	keywords.set(L"TrivialScript", 13);
 
 
 	tvalLength = 128;
@@ -507,13 +509,10 @@ bool Scanner::Comment0() {
 	if (ch == L'#') {
 		NextCh();
 		for(;;) {
-			if (ch == 13) {
+			if (ch == 10) {
+				level--;
+				if (level == 0) { oldEols = line - line0; NextCh(); return true; }
 				NextCh();
-				if (ch == 10) {
-					level--;
-					if (level == 0) { oldEols = line - line0; NextCh(); return true; }
-					NextCh();
-				}
 			} else if (ch == buffer->EoF) return false;
 			else NextCh();
 		}
@@ -529,13 +528,10 @@ bool Scanner::Comment1() {
 	if (ch == L'/') {
 		NextCh();
 		for(;;) {
-			if (ch == 13) {
+			if (ch == 10) {
+				level--;
+				if (level == 0) { oldEols = line - line0; NextCh(); return true; }
 				NextCh();
-				if (ch == 10) {
-					level--;
-					if (level == 0) { oldEols = line - line0; NextCh(); return true; }
-					NextCh();
-				}
 			} else if (ch == buffer->EoF) return false;
 			else NextCh();
 		}
@@ -676,6 +672,10 @@ Token* Scanner::NextToken() {
 			{t->kind = 9; break;}
 		case 12:
 			{t->kind = 10; break;}
+		case 13:
+			{t->kind = 11; break;}
+		case 14:
+			{t->kind = 12; break;}
 
 	}
 	AppendVal(t);

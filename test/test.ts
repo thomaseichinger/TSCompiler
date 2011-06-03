@@ -1,4 +1,4 @@
-TrivialScript 1.2.3.1
+ TrivialScript 1.0
 
 variable = variable
 testname = "here comes a string"
@@ -10,8 +10,8 @@ function = ( para1, para2 ) ->
 	here
 	<-
 	
-##object = $
-##	name : "name"
-##	para : variable
+object = $
+	name : "name"
+	para : variable
 ##	func : function
-##	$
+	$
