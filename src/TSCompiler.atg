@@ -37,7 +37,11 @@ FunctionBody = {ident} .
 
 FunctionDecl =  ParameterDecl "->" FunctionBody "<-".
 
-Object = ident "=" ( VariableDecl | FunctionDecl ) .
+ObjectMemDecl = ident ":" ident .
+
+ObjectDecl = "$" { ObjectMemDecl } "$" .
+
+Object = ident "=" ( VariableDecl | FunctionDecl | ObjectDecl ) .
 
 /*//FunctionDecl = ident "=" "(" {ident} ")" "->" ident. // last ident should really be a "functionbody"
 //ObjectDecl = ident "=>" { ident ":" ident }.*/
