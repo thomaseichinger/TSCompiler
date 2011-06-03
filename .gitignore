@@ -1,5 +1,5 @@
 *.o
 *.old
-./CoCo/Coco
+Coco
 TSCompiler
 
