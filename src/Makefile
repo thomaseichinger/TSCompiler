@@ -33,7 +33,7 @@ doc :
 	doxygen ../Doxyfile
 
 run :
-	../TSCompiler #arguments
+	../TSCompiler ../test/test.ts #arguments
 
 valgrind :
 	valgrind ../TSCompiler #arguments
