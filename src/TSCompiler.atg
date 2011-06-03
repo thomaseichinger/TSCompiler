@@ -1,3 +1,5 @@
+$namespace=TSCompiler
+
 #include "wchar.h"
 
 COMPILER TSCompiler
@@ -21,19 +23,29 @@ COMMENTS FROM "##" TO cr lf
 
 IGNORE cr + lf + tab
 
-
-
 PRODUCTIONS
 
-VersionNum = digit { "." digit }.
+VersionNum = number { "." number }.
 
-VariableDecl = ident "=" ident.
-FunctionDecl = ident "=" "(" {ident} ")" "->" ident. // last ident should really be a "functionbody"
-ObjectDecl = ident "=>" { ident ":" ident }.
+String = '"' { ident | number } '"' .
 
-*------------------------------------------------------------------------*/
+VariableDecl =  ( ident | String ) .
+
+ParameterDecl = "(" ( { ident ( "," | ")" ) } | ")" ) .
+
+FunctionBody = {ident} .
+
+FunctionDecl =  ParameterDecl "->" FunctionBody "<-".
+
+Object = ident "=" ( VariableDecl | FunctionDecl ) .
+
+/*//FunctionDecl = ident "=" "(" {ident} ")" "->" ident. // last ident should really be a "functionbody"
+//ObjectDecl = ident "=>" { ident ":" ident }.*/
+
+/*------------------------------------------------------------------------*/
 TSCompiler
 = "TrivialScript" VersionNum 
-{ VariableDecl | FunctionDecl | ObjectDecl }.
+{ Object } .
+/*{ VariableDecl | FunctionDecl | ObjectDecl }.*/
 
 END TSCompiler.

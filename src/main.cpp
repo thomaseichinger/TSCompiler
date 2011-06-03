@@ -1,8 +1,47 @@
-#include <QtCore/QCoreApplication>
+#include "Stdio.h"
+
+//#include "SymbolTable.h"
+
+#include "Parser.h"
+#include "Scanner.h"
+#include <sys/timeb.h>
+#include <wchar.h>
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+	if (argc == 2) {
+		wchar_t *fileName = coco_string_create(argv[1]);
+		Scanner *scanner = new Scanner(fileName);
+		
+		Parser *parser = new Parser(scanner);
+		
+		//parser->tab = new Taste::SymbolTable(parser);
+		
+		//parser->gen = new Taste::CodeGenerator();
+		
+		parser->Parse();
+		
+		if (parser->errors->count == 0) 
+		{
+			
+			printf("-- Valid TrivialScript Syntax\n");
+			//parser->gen->Decode();
+			
+			//parser->gen->Interpret("Taste.IN");
+		
+		}
 
-    return a.exec();
+		coco_string_delete(fileName);
+		//delete parser->gen;
+		//delete parser->tab;
+		delete parser;
+		delete scanner;
+	} 
+	else
+		
+	{
+		printf("-- No source file specified\n");
+	}
+
+    return 0;
 }
