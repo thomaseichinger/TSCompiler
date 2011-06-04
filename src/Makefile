@@ -1,4 +1,4 @@
-OBJS = main.o Parser.o Scanner.o
+OBJS = main.o Parser.o Scanner.o apdugenerator.o
 CC = g++
 LD = g++
 CC_FLAGS = -c -Wall
@@ -11,6 +11,9 @@ $(EXECUTABLE) : $(OBJS)
 
 main.o : Parser.o Scanner.o main.cpp
 	$(CC) $(CC_FLAGS) main.cpp
+
+apdugenerator.o : apdugenerator.cpp apdugenerator.h
+	$(CC) $(CC_FLAGS) apdugenerator.cpp
 
 Parser.o : Parser.cpp Parser.h Parser.frame
 	$(CC) $(CC_FLAGS) Parser.cpp

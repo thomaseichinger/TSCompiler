@@ -2,4 +2,7 @@
 *.old
 Coco
 TSCompiler
+*.kdev4
+*~
+*.kate-swp
 
