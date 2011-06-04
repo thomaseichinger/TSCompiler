@@ -63,14 +63,14 @@ bool Parser::WeakSeparator(int n, int syFol, int repFol) {
 
 void Parser::VersionNum() {
 		Expect(2);
-		while (la->kind == 3) {
+		while (la->kind == 5) {
 			Get();
 			Expect(2);
 		}
 }
 
 void Parser::String() {
-		Expect(4);
+		Expect(6);
 		while (la->kind == 1 || la->kind == 2) {
 			if (la->kind == 1) {
 				Get();
@@ -78,78 +78,83 @@ void Parser::String() {
 				Get();
 			}
 		}
-		Expect(4);
+		Expect(6);
 }
 
 void Parser::VariableDecl() {
 		if (la->kind == 1) {
 			Get();
-		} else if (la->kind == 4) {
+		} else if (la->kind == 6) {
 			String();
-		} else SynErr(15);
+		} else if (la->kind == 2) {
+			Get();
+		} else if (la->kind == 3) {
+			Get();
+		} else SynErr(16);
 }
 
 void Parser::ParameterDecl() {
-		Expect(5);
-		if (la->kind == 1 || la->kind == 8) {
+		Expect(7);
+		if (la->kind == 1 || la->kind == 10) {
 			while (la->kind == 1) {
 				Get();
-				if (la->kind == 6) {
+				if (la->kind == 8) {
 					Get();
-				} else if (la->kind == 7) {
+				} else if (la->kind == 9) {
 					Get();
-				} else SynErr(16);
+				} else SynErr(17);
 			}
-		} else if (la->kind == 7) {
+		} else if (la->kind == 9) {
 			Get();
-		} else SynErr(17);
+		} else SynErr(18);
 }
 
 void Parser::FunctionBody() {
-		while (la->kind == 1) {
+		Expect(1);
+		while (la->kind == 4) {
 			Get();
+			Expect(1);
 		}
 }
 
 void Parser::FunctionDecl() {
 		ParameterDecl();
-		Expect(8);
+		Expect(10);
 		FunctionBody();
-		Expect(9);
 }
 
 void Parser::ObjectMemDecl() {
 		Expect(1);
-		Expect(10);
+		Expect(11);
 		if (la->kind == 1) {
 			Get();
-		} else if (la->kind == 4) {
+		} else if (la->kind == 6) {
 			String();
-		} else SynErr(18);
+		} else SynErr(19);
 }
 
 void Parser::ObjectDecl() {
-		Expect(11);
+		Expect(12);
 		while (la->kind == 1) {
 			ObjectMemDecl();
 		}
-		Expect(11);
+		Expect(12);
 }
 
 void Parser::Object() {
 		Expect(1);
-		Expect(12);
-		if (la->kind == 1 || la->kind == 4) {
+		Expect(13);
+		if (StartOf(1)) {
 			VariableDecl();
-		} else if (la->kind == 5) {
+		} else if (la->kind == 7) {
 			FunctionDecl();
-		} else if (la->kind == 11) {
+		} else if (la->kind == 12) {
 			ObjectDecl();
-		} else SynErr(19);
+		} else SynErr(20);
 }
 
 void Parser::TSCompiler() {
-		Expect(13);
+		Expect(14);
 		VersionNum();
 		while (la->kind == 1) {
 			Object();
@@ -168,7 +173,7 @@ void Parser::Parse() {
 }
 
 Parser::Parser(Scanner *scanner) {
-	maxT = 14;
+	maxT = 15;
 
 	dummyToken = NULL;
 	t = la = NULL;
@@ -182,8 +187,9 @@ bool Parser::StartOf(int s) {
 	const bool T = true;
 	const bool x = false;
 
-	static bool set[1][16] = {
-		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x}
+	static bool set[2][17] = {
+		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x}
 	};
 
 
@@ -206,23 +212,24 @@ void Errors::SynErr(int line, int col, int n) {
 			case 0: s = coco_string_create(L"EOF expected"); break;
 			case 1: s = coco_string_create(L"ident expected"); break;
 			case 2: s = coco_string_create(L"number expected"); break;
-			case 3: s = coco_string_create(L"\".\" expected"); break;
-			case 4: s = coco_string_create(L"\"\"\" expected"); break;
-			case 5: s = coco_string_create(L"\"(\" expected"); break;
-			case 6: s = coco_string_create(L"\",\" expected"); break;
-			case 7: s = coco_string_create(L"\")\" expected"); break;
-			case 8: s = coco_string_create(L"\"->\" expected"); break;
-			case 9: s = coco_string_create(L"\"<-\" expected"); break;
-			case 10: s = coco_string_create(L"\":\" expected"); break;
-			case 11: s = coco_string_create(L"\"$\" expected"); break;
-			case 12: s = coco_string_create(L"\"=\" expected"); break;
-			case 13: s = coco_string_create(L"\"TrivialScript\" expected"); break;
-			case 14: s = coco_string_create(L"??? expected"); break;
-			case 15: s = coco_string_create(L"invalid VariableDecl"); break;
-			case 16: s = coco_string_create(L"invalid ParameterDecl"); break;
+			case 3: s = coco_string_create(L"hexnumber expected"); break;
+			case 4: s = coco_string_create(L"intent expected"); break;
+			case 5: s = coco_string_create(L"\".\" expected"); break;
+			case 6: s = coco_string_create(L"\"\"\" expected"); break;
+			case 7: s = coco_string_create(L"\"(\" expected"); break;
+			case 8: s = coco_string_create(L"\",\" expected"); break;
+			case 9: s = coco_string_create(L"\")\" expected"); break;
+			case 10: s = coco_string_create(L"\"->\" expected"); break;
+			case 11: s = coco_string_create(L"\":\" expected"); break;
+			case 12: s = coco_string_create(L"\"$\" expected"); break;
+			case 13: s = coco_string_create(L"\"=\" expected"); break;
+			case 14: s = coco_string_create(L"\"TrivialScript\" expected"); break;
+			case 15: s = coco_string_create(L"??? expected"); break;
+			case 16: s = coco_string_create(L"invalid VariableDecl"); break;
 			case 17: s = coco_string_create(L"invalid ParameterDecl"); break;
-			case 18: s = coco_string_create(L"invalid ObjectMemDecl"); break;
-			case 19: s = coco_string_create(L"invalid Object"); break;
+			case 18: s = coco_string_create(L"invalid ParameterDecl"); break;
+			case 19: s = coco_string_create(L"invalid ObjectMemDecl"); break;
+			case 20: s = coco_string_create(L"invalid Object"); break;
 
 		default:
 		{

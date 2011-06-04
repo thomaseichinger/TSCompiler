@@ -31,6 +31,9 @@ tar :
 
 doc :
 	doxygen ../Doxyfile
+	
+coco :
+	$(COCO) TSCompiler.atg
 
 run :
 	../TSCompiler ../test/test.ts #arguments

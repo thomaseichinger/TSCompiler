@@ -28,7 +28,9 @@ private:
 	enum {
 		_EOF=0,
 		_ident=1,
-		_number=2
+		_number=2,
+		_hexnumber=3,
+		_intent=4
 	};
 	int maxT;
 

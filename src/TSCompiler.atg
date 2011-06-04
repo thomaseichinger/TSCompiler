@@ -16,10 +16,12 @@ CHARACTERS
 TOKENS
   ident  = letter {letter | digit}.
   number = digit {digit}.
+  hexnumber = "0x" hexdigit { hexdigit } .
+  intent = tab .
 
 COMMENTS FROM "/*" TO "*/" NESTED
-COMMENTS FROM "//" TO lf		//win: TO cr lf
-COMMENTS FROM "##" TO lf		//win: TO cr lf
+COMMENTS FROM "//" TO lf		//win32: TO cr lf
+COMMENTS FROM "##" TO lf		//win32: TO cr lf
 
 IGNORE cr + lf + tab
 
@@ -34,16 +36,19 @@ VersionNum = number { "." number }.
 String = '"' { ident | number } '"' .
 
 /*------------------------------------------------------------------------*/
-VariableDecl =  ( ident | String ) .
+VariableDecl =  ( ident | String | number | hexnumber ) .
 
 /*------------------------------------------------------------------------*/
 ParameterDecl = "(" ( { ident ( "," | ")" ) } | ")" ) .
 
 /*------------------------------------------------------------------------*/
-FunctionBody = {ident} .
+//FunctionBody = {ident} .
 
 /*------------------------------------------------------------------------*/
-FunctionDecl =  ParameterDecl "->" FunctionBody  "<-".
+//FunctionDecl =  ParameterDecl "->" FunctionBody  "<-".
+
+FunctionBody = ident { intent ident } .
+FunctionDecl = ParameterDecl "->" FunctionBody .
 
 /*------------------------------------------------------------------------*/
 ObjectMemDecl = ident ":" ( ident | String ) .
