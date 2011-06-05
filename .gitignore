@@ -5,4 +5,4 @@ TSCompiler
 *.kdev4
 *~
 *.kate-swp
-
+build/*

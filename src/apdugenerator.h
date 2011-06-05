@@ -1,5 +1,6 @@
 #ifndef APDUGENERATOR_H
 #define APDUGENERATOR_H
+
 #include <string>
 
 class ApduGenerator
@@ -7,10 +8,9 @@ class ApduGenerator
 public:
     ApduGenerator();
     ~ApduGenerator();
-    ApduGenerator( &ApduGenerator );
     
     void append( unsigned char opcode );
-    void append( 
+    void append( std::string );
     
 private:
     std::string m_apdu;
