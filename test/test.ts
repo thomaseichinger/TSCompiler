@@ -1,4 +1,4 @@
- TrivialScript 1.0
+ TrivialScript 0.1
 
 variable = variable
 testname = "here comes a string"

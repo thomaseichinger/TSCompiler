@@ -7,6 +7,7 @@
 
 
 #include "Scanner.h"
+#include "tsdata.h"
 
 
 
@@ -48,13 +49,14 @@ private:
 public:
 	Scanner *scanner;
 	Errors  *errors;
+	TSData *data;
 
 	Token *t;			// last recognized token
 	Token *la;			// lookahead token
 
 
 
-	Parser(Scanner *scanner);
+	Parser(Scanner *scanner, TSData *d);
 	~Parser();
 	void SemErr(const wchar_t* msg);
 

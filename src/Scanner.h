@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+#include <QString>
 
 // io.h and fcntl are used to ensure binary read from streams on windows
 #if _MSC_VER >= 1300
@@ -33,6 +34,7 @@
 #define COCO_CPP_NAMESPACE_SEPARATOR L':'
 
 // string handling, wide character
+QString  coco_qstring_create(const wchar_t *value);
 wchar_t* coco_string_create(const wchar_t *value);
 wchar_t* coco_string_create(const wchar_t *value, int startIndex);
 wchar_t* coco_string_create(const wchar_t *value, int startIndex, int length);

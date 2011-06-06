@@ -30,7 +30,17 @@ IGNORE cr + lf + tab
 PRODUCTIONS
 
 /*------------------------------------------------------------------------*/
-VersionNum = number { "." number }.
+VersionNum = number 	(. QString versNum( coco_qstring_create(t->val) ); .)
+			{ 
+			"." 		
+			number 		(. versNum.append( coco_qstring_create(t->val) ); .)
+			}			(. if (versNum != data->version() )
+							{
+								std::cout << "-- ERROR: Using false TSCompiler version" << std::endl;
+								data->quit();
+							}
+						.)
+			.
 
 /*------------------------------------------------------------------------*/
 String = '"' { ident | number } '"' .

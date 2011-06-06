@@ -7,6 +7,10 @@
 // string handling, wide character
 
 
+QString coco_qstring_create(const wchar_t* value) {
+	return QString::fromStdWString( coco_string_create(value, 0) );
+}
+
 wchar_t* coco_string_create(const wchar_t* value) {
 	return coco_string_create(value, 0);
 }

@@ -3,6 +3,7 @@
 #include <wchar.h>
 #include "Parser.h"
 #include "Scanner.h"
+#include <iostream>
 
 
 
@@ -63,10 +64,18 @@ bool Parser::WeakSeparator(int n, int syFol, int repFol) {
 
 void Parser::VersionNum() {
 		Expect(2);
+		QString versNum( coco_qstring_create(t->val) ); 
 		while (la->kind == 5) {
 			Get();
 			Expect(2);
+			versNum.append( coco_qstring_create(t->val) ); 
 		}
+		if (versNum != data->version() )
+		{
+			std::cout << "-- ERROR: Using false TSCompiler version" << std::endl;
+			data->quit();
+		}
+		
 }
 
 void Parser::String() {
@@ -172,7 +181,7 @@ void Parser::Parse() {
 	Expect(0);
 }
 
-Parser::Parser(Scanner *scanner) {
+Parser::Parser(Scanner *scanner, TSData* d) : data(d) {
 	maxT = 15;
 
 	dummyToken = NULL;

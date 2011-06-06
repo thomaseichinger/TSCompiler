@@ -38,6 +38,7 @@ Parser.h Specification
 -->headerdef
 
 #include "Scanner.h"
+#include "tsdata.h"
 
 -->namespace_open
 
@@ -71,13 +72,14 @@ private:
 public:
 	Scanner *scanner;
 	Errors  *errors;
+	TSData *data;
 
 	Token *t;			// last recognized token
 	Token *la;			// lookahead token
 
 -->declarations
 
-	Parser(Scanner *scanner);
+	Parser(Scanner *scanner, TSData *d);
 	~Parser();
 	void SemErr(const wchar_t* msg);
 
@@ -101,6 +103,7 @@ Parser.cpp Specification
 #include <wchar.h>
 #include "Parser.h"
 #include "Scanner.h"
+#include <iostream>
 
 
 -->namespace_open
@@ -169,7 +172,7 @@ void Parser::Parse() {
 -->parseRoot
 }
 
-Parser::Parser(Scanner *scanner) {
+Parser::Parser(Scanner *scanner, TSData* d) : data(d) {
 -->constants
 	dummyToken = NULL;
 	t = la = NULL;
