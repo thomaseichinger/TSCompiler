@@ -7,33 +7,37 @@
 #include <sys/timeb.h>
 #include <wchar.h>
 
+#include <apdugenerator.h>
+#include <opcodetable.h>
+#include <apduviewer.h>
+#include <QtGui>
+
 int main(int argc, char *argv[])
 {
-	if (argc == 2) {
+        std::string apdu = "b8 aa 00 00 Opcode Hexes come here";
+        QApplication app( argc, argv );
+        ApduViewer* viewer = new ApduViewer();
+        viewer->show();
+        viewer->setApduText( apdu );
+
+        if (argc == 2) {
 		wchar_t *fileName = coco_string_create(argv[1]);
 		Scanner *scanner = new Scanner(fileName);
-		
-		Parser *parser = new Parser(scanner);
-		
-		//parser->tab = new Taste::SymbolTable(parser);
-		
-		//parser->gen = new Taste::CodeGenerator();
+                ApduGenerator* gen = new ApduGenerator( new OpcodeTable );
+                Parser *parser = new Parser(scanner);
 		
 		parser->Parse();
 		
 		if (parser->errors->count == 0) 
 		{
 			
-			printf("-- Valid TrivialScript Syntax\n");
-			//parser->gen->Decode();
-			
-			//parser->gen->Interpret("Taste.IN");
-		
+                        printf("-- Valid TrivialScript Syntax\n");
+                        //ApduViewer* viewer = new ApduViewer();
+                        //viewer->show();
 		}
 
-		coco_string_delete(fileName);
-		//delete parser->gen;
-		//delete parser->tab;
+                coco_string_delete(fileName);
+                delete gen;
 		delete parser;
 		delete scanner;
 	} 
@@ -43,5 +47,5 @@ int main(int argc, char *argv[])
 		printf("-- No source file specified\n");
 	}
 
-    return 0;
+    return app.exec();
 }
