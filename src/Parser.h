@@ -11,16 +11,20 @@
 
 
 
+class TSCommunicator;
+
 class Errors {
 public:
 	int count;			// number of errors detected
 
-	Errors();
+	Errors(TSCommunicator* com);
 	void SynErr(int line, int col, int n);
 	void Error(int line, int col, const wchar_t *s);
 	void Warning(int line, int col, const wchar_t *s);
 	void Warning(const wchar_t *s);
 	void Exception(const wchar_t *s);
+	
+	TSCommunicator* m_com;
 
 }; // Errors
 
@@ -56,7 +60,7 @@ public:
 
 
 
-	Parser(Scanner *scanner, TSData *d);
+	Parser(Scanner *scanner, TSData *d, TSCommunicator* com);
 	~Parser();
 	void SemErr(const wchar_t* msg);
 

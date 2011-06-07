@@ -13,7 +13,7 @@ TARGET_LINK_LIBRARIES(tscompiler ${QT_LIBRARIES})
 
 if (CMAKE_COMPILER_IS_GNUCC)
     message("compiler flags will work")
-    set_source_files_properties(${TSCompiler_SOURCES} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
+    set_source_files_properties(${TSCompiler_SOURCES} PROPERTIES COMPILE_FLAGS "-g -Werror -Wall")
 endif ()
 
 set_property(DIRECTORY APPEND PROPERTY

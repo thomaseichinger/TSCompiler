@@ -42,16 +42,20 @@ Parser.h Specification
 
 -->namespace_open
 
+class TSCommunicator;
+
 class Errors {
 public:
 	int count;			// number of errors detected
 
-	Errors();
+	Errors(TSCommunicator* com);
 	void SynErr(int line, int col, int n);
 	void Error(int line, int col, const wchar_t *s);
 	void Warning(int line, int col, const wchar_t *s);
 	void Warning(const wchar_t *s);
 	void Exception(const wchar_t *s);
+	
+	TSCommunicator* m_com;
 
 }; // Errors
 
@@ -79,7 +83,7 @@ public:
 
 -->declarations
 
-	Parser(Scanner *scanner, TSData *d);
+	Parser(Scanner *scanner, TSData *d, TSCommunicator* com);
 	~Parser();
 	void SemErr(const wchar_t* msg);
 
@@ -104,6 +108,7 @@ Parser.cpp Specification
 #include "Parser.h"
 #include "Scanner.h"
 #include <iostream>
+#include <tscommunicator.h>
 
 
 -->namespace_open
@@ -172,14 +177,14 @@ void Parser::Parse() {
 -->parseRoot
 }
 
-Parser::Parser(Scanner *scanner, TSData* d) : data(d) {
+Parser::Parser(Scanner *scanner, TSData* d, TSCommunicator* com) : data(d) {
 -->constants
 	dummyToken = NULL;
 	t = la = NULL;
 	minErrDist = 2;
 	errDist = minErrDist;
 	this->scanner = scanner;
-	errors = new Errors();
+	errors = new Errors(com);
 }
 
 bool Parser::StartOf(int s) {
@@ -196,7 +201,7 @@ Parser::~Parser() {
 	delete dummyToken;
 }
 
-Errors::Errors() {
+Errors::Errors(TSCommunicator* com) : m_com(com) {
 	count = 0;
 }
 
@@ -212,26 +217,31 @@ void Errors::SynErr(int line, int col, int n) {
 		}
 		break;
 	}
-	wprintf(L"-- line %d col %d: %ls\n", line, col, s);
+	//wprintf(L"-- line %d col %d: %ls\n", line, col, s);
+	m_com->error( QString().append("line %1 col %2: %3").arg(line).arg(col).arg(QString().fromStdWString(s)));
 	coco_string_delete(s);
 	count++;
 }
 
 void Errors::Error(int line, int col, const wchar_t *s) {
-	wprintf(L"-- line %d col %d: %ls\n", line, col, s);
+	//wprintf(L"-- line %d col %d: %ls\n", line, col, s);
+	m_com->error( QString().append("line %1 col %2: %3").arg(line).arg(col).arg(QString().fromStdWString(s)));
 	count++;
 }
 
 void Errors::Warning(int line, int col, const wchar_t *s) {
-	wprintf(L"-- line %d col %d: %ls\n", line, col, s);
+	//wprintf(L"-- line %d col %d: %ls\n", line, col, s);
+	m_com->error( QString().append("line %1 col %2: %3").arg(line).arg(col).arg(QString().fromStdWString(s)));
 }
 
 void Errors::Warning(const wchar_t *s) {
-	wprintf(L"%ls\n", s);
+	//wprintf(L"%ls\n", s);
+	m_com->error( QString().fromStdWString(s) );
 }
 
 void Errors::Exception(const wchar_t* s) {
-	wprintf(L"%ls", s); 
+	//wprintf(L"%ls", s); 
+	m_com->error( QString().fromStdWString(s) );
 	exit(1);
 }
 

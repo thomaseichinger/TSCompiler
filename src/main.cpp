@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 		Scanner *scanner = new Scanner(fileName);
                 ApduGenerator* gen = new ApduGenerator( new OpcodeTable );
                 TSData* tsdata = new TSData();
-                Parser *parser = new Parser(scanner, tsdata);
+                Parser *parser = new Parser(scanner, tsdata, com);
 		
 		parser->Parse();
 		
