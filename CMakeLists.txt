@@ -37,3 +37,4 @@ endif(WIN32)
 add_custom_target(coco ${COCO_EXECUTEABLE} ${CMAKE_SOURCE_DIR}/src/TSCompiler.atg DEPENDS ${COCO_FILES})
 
 add_dependencies(tscompiler coco)
+
