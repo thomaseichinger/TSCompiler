@@ -6,3 +6,4 @@ TSCompiler
 *~
 *.kate-swp
 build/*
+patch/*
