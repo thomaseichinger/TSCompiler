@@ -18,10 +18,11 @@ signals:
 
 public slots:
     void copyToClipboard();
+    void append(QString er);
 
 private:
     QTextEdit* m_textEdit;
-
+    QString m_apdu;
 };
 
 #endif // APDUVIEWER_H

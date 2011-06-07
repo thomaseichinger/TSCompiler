@@ -30,12 +30,18 @@ ApduViewer::~ApduViewer()
 
 void ApduViewer::setApduText( std::string apdu )
 {
-    m_textEdit->setPlainText( QString(apdu.c_str()) );
+    ApduViewer::append( QString().fromStdString(apdu) );
+    m_apdu = apdu.c_str();
     return;
 }
 
 void ApduViewer::copyToClipboard()
 {
     QClipboard *clip = QApplication::clipboard();
-    clip->setText( m_textEdit->toPlainText() );
+    clip->setText( m_apdu );
+}
+
+void ApduViewer::append(QString er)
+{
+    m_textEdit->append( er );
 }

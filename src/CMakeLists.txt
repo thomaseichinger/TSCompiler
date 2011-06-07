@@ -4,7 +4,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # SOURCES variable including all *cpp files
 file(GLOB TSCompiler_SOURCES *.cpp)
 file(GLOB TSCompiler_HEADERS *.h)
-QT4_WRAP_CPP(TSCompiler_HEADERS_MOC apduviewer.h)
+QT4_WRAP_CPP(TSCompiler_HEADERS_MOC apduviewer.h tscommunicator.h)
 
 set(COCO_FILES TSCompiler.atg Parser.frame Scanner.frame)
 

@@ -12,11 +12,15 @@
 #include <apduviewer.h>
 #include <QtGui>
 #include <iostream>
+#include <tscommunicator.h>
 
 int main(int argc, char *argv[])
 {
         std::string apdu = "b8 aa 00 00 Opcode Hexes come here";
         QApplication app( argc, argv );
+
+        ApduViewer* viewer = new ApduViewer();
+        TSCommunicator* com = new TSCommunicator( viewer );
 
         if (argc == 2) {
 		wchar_t *fileName = coco_string_create(argv[1]);
@@ -29,18 +33,13 @@ int main(int argc, char *argv[])
 		
 		if (parser->errors->count == 0) 
 		{
-			
-                        printf("-- Valid TrivialScript Syntax\n");
-                        ApduViewer* viewer = new ApduViewer();
+                        com->out( QString("-- Valid TrivialScript Syntax") );
                         viewer->setApduText( apdu );
                         viewer->show();
 		}
                 else
                 {
-                    std::cout << "-- " << parser->errors->count << " Errors occured. Fix them!" << std::endl;
-                    ApduViewer* viewer = new ApduViewer();
-                    viewer->setApduText( QString("-- ").append(QString::number(parser->errors->count))
-                                        .append(" Errors occured.").toStdString() );
+                    com->error( QString().append(parser->errors->count).append("Errors occured") );
                     viewer->show();
                 }
 
@@ -48,12 +47,16 @@ int main(int argc, char *argv[])
                 delete gen;
 		delete parser;
 		delete scanner;
+                delete tsdata;
 	} 
 	else
 		
 	{
-		printf("-- No source file specified\n");
+                com->error( QString("No source file specified\n") );
 	}
+
+        delete com;
+        delete viewer;
 
     return app.exec();
 }
