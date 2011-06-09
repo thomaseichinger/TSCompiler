@@ -424,25 +424,26 @@ Scanner::~Scanner() {
 void Scanner::Init() {
 	EOL    = '\n';
 	eofSym = 0;
-	maxT = 15;
-	noSym = 15;
+	maxT = 16;
+	noSym = 16;
 	int i;
 	for (i = 65; i <= 90; ++i) start.set(i, 1);
 	for (i = 97; i <= 122; ++i) start.set(i, 1);
 	for (i = 49; i <= 57; ++i) start.set(i, 2);
 	for (i = 9; i <= 9; ++i) start.set(i, 5);
-	start.set(48, 6);
-	start.set(46, 7);
-	start.set(34, 8);
-	start.set(40, 9);
-	start.set(44, 10);
-	start.set(41, 11);
-	start.set(45, 12);
-	start.set(58, 14);
-	start.set(36, 15);
-	start.set(61, 16);
+	start.set(48, 8);
+	start.set(34, 6);
+	start.set(46, 9);
+	start.set(40, 10);
+	start.set(44, 11);
+	start.set(41, 12);
+	start.set(45, 13);
+	start.set(58, 15);
+	start.set(123, 16);
+	start.set(125, 17);
+	start.set(61, 18);
 		start.set(Buffer::EoF, -1);
-	keywords.set(L"TrivialScript", 14);
+	keywords.set(L"TrivialScript", 15);
 
 
 	tvalLength = 128;
@@ -623,7 +624,7 @@ void Scanner::AppendVal(Token *t) {
 
 Token* Scanner::NextToken() {
 	while (ch == ' ' ||
-			(ch >= 9 && ch <= 10) || ch == 13
+			ch == 10 || ch == 13
 	) NextCh();
 	if ((ch == L'#' && Comment0()) || (ch == L'/' && Comment1()) || (ch == L'/' && Comment2())) return NextToken();
 	int recKind = noSym;
@@ -665,32 +666,40 @@ Token* Scanner::NextToken() {
 		case 5:
 			{t->kind = 4; break;}
 		case 6:
+			case_6:
+			if (ch <= L'!' || (ch >= L'#' && ch <= 65535)) {AddCh(); goto case_6;}
+			else if (ch == L'"') {AddCh(); goto case_7;}
+			else {goto case_0;}
+		case 7:
+			case_7:
+			{t->kind = 5; break;}
+		case 8:
 			recEnd = pos; recKind = 2;
 			if ((ch >= L'0' && ch <= L'9')) {AddCh(); goto case_2;}
 			else if (ch == L'x') {AddCh(); goto case_3;}
 			else {t->kind = 2; break;}
-		case 7:
-			{t->kind = 5; break;}
-		case 8:
-			{t->kind = 6; break;}
 		case 9:
-			{t->kind = 7; break;}
+			{t->kind = 6; break;}
 		case 10:
-			{t->kind = 8; break;}
+			{t->kind = 7; break;}
 		case 11:
-			{t->kind = 9; break;}
+			{t->kind = 8; break;}
 		case 12:
-			if (ch == L'>') {AddCh(); goto case_13;}
-			else {goto case_0;}
+			{t->kind = 9; break;}
 		case 13:
-			case_13:
-			{t->kind = 10; break;}
+			if (ch == L'>') {AddCh(); goto case_14;}
+			else {goto case_0;}
 		case 14:
-			{t->kind = 11; break;}
+			case_14:
+			{t->kind = 10; break;}
 		case 15:
-			{t->kind = 12; break;}
+			{t->kind = 11; break;}
 		case 16:
+			{t->kind = 12; break;}
+		case 17:
 			{t->kind = 13; break;}
+		case 18:
+			{t->kind = 14; break;}
 
 	}
 	AppendVal(t);

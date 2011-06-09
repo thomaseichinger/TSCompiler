@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
         std::string apdu = "b8 aa 00 00 Opcode Hexes come here";
         QApplication app( argc, argv );
 
-        ApduViewer* viewer = new ApduViewer();
-        TSCommunicator* com = new TSCommunicator( viewer );
+        ApduViewer viewer;
+        TSCommunicator* com = new TSCommunicator( &viewer );
 
         if (argc == 2) {
 		wchar_t *fileName = coco_string_create(argv[1]);
@@ -33,14 +33,16 @@ int main(int argc, char *argv[])
 		
 		if (parser->errors->count == 0) 
 		{
-                        com->out( QString("-- Valid TrivialScript Syntax") );
-                        viewer->setApduText( apdu );
-                        viewer->show();
+                        com->out( QString("Valid TrivialScript Syntax") );
+                        viewer.setApduText( apdu );
+                        viewer.show();
 		}
                 else
                 {
-                    com->error( QString().append(parser->errors->count).append("Errors occured") );
-                    viewer->show();
+                    com->error( QString().append("%1 Errors occured")
+                                         .arg(parser->errors->count)
+                               );
+                    viewer.show();
                 }
 
                 coco_string_delete(fileName);
@@ -56,7 +58,6 @@ int main(int argc, char *argv[])
 	}
 
         delete com;
-        delete viewer;
 
     return app.exec();
 }

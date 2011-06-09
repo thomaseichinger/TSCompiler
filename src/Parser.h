@@ -8,6 +8,7 @@
 
 #include "Scanner.h"
 #include "tsdata.h"
+#include <QString>
 
 
 
@@ -19,6 +20,7 @@ public:
 
 	Errors(TSCommunicator* com);
 	void SynErr(int line, int col, int n);
+	void Error( QString er );
 	void Error(int line, int col, const wchar_t *s);
 	void Warning(int line, int col, const wchar_t *s);
 	void Warning(const wchar_t *s);
@@ -35,7 +37,8 @@ private:
 		_ident=1,
 		_number=2,
 		_hexnumber=3,
-		_intent=4
+		_intent=4,
+		_string=5
 	};
 	int maxT;
 
@@ -65,8 +68,8 @@ public:
 	void SemErr(const wchar_t* msg);
 
 	void VersionNum();
-	void String();
-	void VariableDecl();
+	void String(QString current);
+	void VariableDecl(QString name);
 	void ParameterDecl();
 	void FunctionBody();
 	void FunctionDecl();

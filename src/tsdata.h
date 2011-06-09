@@ -17,6 +17,8 @@ public:
     void addVariableWithValue( QString name, QString value );
     QString variableValue( QString name );
 
+    QString m_currentIdent;
+
 private:
     QMap<QString,QString> m_variableMap;
 };

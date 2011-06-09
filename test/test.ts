@@ -1,16 +1,17 @@
  TrivialScript 0.1
 
-variable = variable
 testname = "here comes a string"
+variable = testname
 
+/* comment */
 function = ( para1, para2 ) -> body 
 	functions
 	come
 	here
-	<-
-	
-object = $
+
+// comment
+object = { par : testname
 	name : "name"
 	para : variable
-##	func : function
-	$
+##	commented func : function
+}

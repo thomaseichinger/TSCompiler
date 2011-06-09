@@ -22,6 +22,7 @@ public slots:
 
 private:
     QTextEdit* m_textEdit;
+    bool m_apduIsSet;
     QString m_apdu;
 };
 

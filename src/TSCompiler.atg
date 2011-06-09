@@ -9,6 +9,7 @@ CHARACTERS
   letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
   digit = "0123456789".
   hexdigit = digit + "ABCDEF".
+  stringchar = ANY - '\"'.
   cr  = '\r'.
   lf  = '\n'.
   tab = '\t'.
@@ -18,12 +19,13 @@ TOKENS
   number = digit {digit}.
   hexnumber = "0x" hexdigit { hexdigit } .
   intent = tab .
+  string  = "\"" {stringchar} "\"".
 
 COMMENTS FROM "/*" TO "*/" NESTED
 COMMENTS FROM "//" TO lf		//win32: TO cr lf
 COMMENTS FROM "##" TO lf		//win32: TO cr lf
 
-IGNORE cr + lf + tab
+IGNORE cr + lf 
 
 /*------------------------------------------------------------------------*/
 
@@ -36,38 +38,72 @@ VersionNum = number 	(. QString versNum( coco_qstring_create(t->val) ); .)
 			number 		(. versNum.append( coco_qstring_create(t->val) ); .)
 			}			(. if (versNum != data->version() )
 							{
-								std::cout << "-- ERROR: Using false TSCompiler version" << std::endl;
-								data->quit();
+								errors->Error( QString("Using false TSCompiler version") );
+								//data->quit();
 							}
 						.)
 			.
 
 /*------------------------------------------------------------------------*/
-String = '"' { ident | number } '"' .
+String<QString current> =  
+						{ 
+						string		(. current.append(coco_qstring_create(t->val)); .)
+						}  		(. current.remove("\""); errors->m_com->out( "String is: " + current ); .)
+						.
 
 /*------------------------------------------------------------------------*/
-VariableDecl =  ( ident | String | number | hexnumber ) .
+VariableDecl<QString name> = (. QString current; .)
+			( ident 	(. current = coco_qstring_create(t->val); 
+						   (data->variable(current)) ? data->addVariableWithValue( name, data->variableValue(current) ) : errors->Error(QString("Variable %1 not specified in this scope.").arg(current));
+						.)
+			| String<current> 	(. data->addVariableWithValue( name, current ); .)
+			| number 			(. data->addVariableWithValue( name, current ); .)
+			| hexnumber 		(. data->addVariableWithValue( name, current ); .)
+			) 					(. errors->m_com->out( name + "=" + data->variableValue(name) ); .)
+			.
 
 /*------------------------------------------------------------------------*/
 ParameterDecl = "(" ( { ident ( "," | ")" ) } | ")" ) .
 
 /*------------------------------------------------------------------------*/
-//FunctionBody = {ident} .
+FunctionBody = ident (. errors->m_com->out( QString("body") ); .) 
+			{ 
+			intent (. errors->m_com->out( QString("body ").append( coco_qstring_create(t->val) )); .)
+			ident  (. errors->m_com->out( QString("body ").append( coco_qstring_create(t->val) )); .)
+			} 	(. errors->m_com->out( QString("end of body") ); .)
+			.
+			
+/*------------------------------------------------------------------------*/
+FunctionDecl = ParameterDecl 
+			"->" 
+			FunctionBody (. errors->m_com->out( QString( "end of function") ); .)
+			.
 
 /*------------------------------------------------------------------------*/
-//FunctionDecl =  ParameterDecl "->" FunctionBody  "<-".
-
-FunctionBody = ident { intent ident } .
-FunctionDecl = ParameterDecl "->" FunctionBody .
-
-/*------------------------------------------------------------------------*/
-ObjectMemDecl = ident ":" ( ident | String ) .
-
-/*------------------------------------------------------------------------*/
-ObjectDecl = "$" { ObjectMemDecl } "$" .
+ObjectMemDecl = 		(. QString current; .)
+				ident	(. errors->m_com->out( QString( "it's an ts object member") ); .)
+				":" 
+				( 
+				ident 
+				| String<current> 
+				) 
+				.
 
 /*------------------------------------------------------------------------*/
-Object = ident "=" ( VariableDecl | FunctionDecl | ObjectDecl ) .
+ObjectDecl = "{" 			(. errors->m_com->out( QString( "it's an ts object") ); .)
+			{ 
+			{intent} ObjectMemDecl 
+			} 
+			"}" 			(. errors->m_com->out( QString( "end of ts object") ); .)
+			.
+
+/*------------------------------------------------------------------------*/
+Object = ident (. QString name = coco_qstring_create( t->val ); .)
+		"=" 
+		( VariableDecl<name> (. errors->m_com->out( QString( "was a variable") ); .)
+		| FunctionDecl (. errors->m_com->out( QString( "was a function") ); .)
+		| ObjectDecl   (. errors->m_com->out( QString( "was a ts object") ); .)
+		) .
 
 /*------------------------------------------------------------------------*/
 TSCompiler
