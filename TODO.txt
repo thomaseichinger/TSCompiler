@@ -1,3 +1,4 @@
-* TSCommunicator
+* TSCommunicator[DONE]
 	to write ERRORS ... to TextView and shell
-* append output in TextView and save APDU in own field to provide copy functionality
+* append output in TextView and save APDU in own field to provide copy functionality [DONE]
+

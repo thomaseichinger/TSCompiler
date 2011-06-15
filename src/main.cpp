@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 		{
                         com->out( QString("Valid TrivialScript Syntax") );
                         viewer.setApduText( apdu );
+                        com->out( tsdata->dumpDataStructures() );
                         viewer.show();
 		}
                 else

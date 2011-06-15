@@ -68,13 +68,13 @@ public:
 	void SemErr(const wchar_t* msg);
 
 	void VersionNum();
-	void String(QString current);
+	void String(QString *current);
 	void VariableDecl(QString name);
-	void ParameterDecl();
-	void FunctionBody();
-	void FunctionDecl();
-	void ObjectMemDecl();
-	void ObjectDecl();
+	void ParameterDecl(TSFunction* f);
+	void FunctionBody(TSFunction* f);
+	void FunctionDecl(QString name);
+	void ObjectMemDecl(TSObject* o);
+	void ObjectDecl(QString name);
 	void Object();
 	void TSCompiler();
 

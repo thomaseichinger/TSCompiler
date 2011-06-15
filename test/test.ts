@@ -2,6 +2,7 @@
 
 testname = "here comes a string"
 variable = testname
+varnum = 12300
 
 /* comment */
 function = ( para1, para2 ) -> body 

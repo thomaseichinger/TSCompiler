@@ -45,64 +45,76 @@ VersionNum = number 	(. QString versNum( coco_qstring_create(t->val) ); .)
 			.
 
 /*------------------------------------------------------------------------*/
-String<QString current> =  
+String<QString *current> =  
 						{ 
-						string		(. current.append(coco_qstring_create(t->val)); .)
-						}  		(. current.remove("\""); errors->m_com->out( "String is: " + current ); .)
+						string		(. current->append(coco_qstring_create(t->val)); .)
+						}  			(. current->remove("\""); .)
 						.
 
 /*------------------------------------------------------------------------*/
-VariableDecl<QString name> = (. QString current; .)
-			( ident 	(. current = coco_qstring_create(t->val); 
-						   (data->variable(current)) ? data->addVariableWithValue( name, data->variableValue(current) ) : errors->Error(QString("Variable %1 not specified in this scope.").arg(current));
+VariableDecl<QString name> = (. QString* current = new QString(); .)
+			( ident 	(. *current = coco_qstring_create(t->val); 
+						   (data->variable(*current)) ? data->addVariableWithValue( name, data->variableValue(*current) ) : errors->Error(QString("Variable %1 not specified in this scope.").arg(*current));
 						.)
-			| String<current> 	(. data->addVariableWithValue( name, current ); .)
-			| number 			(. data->addVariableWithValue( name, current ); .)
-			| hexnumber 		(. data->addVariableWithValue( name, current ); .)
-			) 					(. errors->m_com->out( name + "=" + data->variableValue(name) ); .)
+			| String<current> 	(. data->addVariableWithValue( name, *current ); .)
+			| number 			(. *current = coco_qstring_create(t->val);data->addVariableWithValue( name, *current ); .)
+			| hexnumber 		(. *current = coco_qstring_create(t->val);data->addVariableWithValue( name, *current ); .)
+			) 					(. (current->isEmpty())?errors->m_com->out(QString("no val for %1").arg(name)):errors->m_com->out( name + "=" + *current ); 
+								   delete current; .)
 			.
 
 /*------------------------------------------------------------------------*/
-ParameterDecl = "(" ( { ident ( "," | ")" ) } | ")" ) .
+ParameterDecl<TSFunction* f> = 	(. QStringList l; .)
+			"(" ( 
+			{ 
+			ident 				(. l << coco_qstring_create(t->val); .)
+			( "," | ")" ) 
+			} | ")" ) 			(. f->setParameters( l ); .)
+			.
 
 /*------------------------------------------------------------------------*/
-FunctionBody = ident (. errors->m_com->out( QString("body") ); .) 
+FunctionBody<TSFunction* f> =  (. QStringList l; .)
+			ident (. l << coco_qstring_create(t->val);errors->m_com->out( QString("body") ); .) 
 			{ 
-			intent (. errors->m_com->out( QString("body ").append( coco_qstring_create(t->val) )); .)
-			ident  (. errors->m_com->out( QString("body ").append( coco_qstring_create(t->val) )); .)
-			} 	(. errors->m_com->out( QString("end of body") ); .)
+			intent (. errors->m_com->out( QString("body tab") ); .)
+			ident  (. l << coco_qstring_create(t->val);errors->m_com->out( QString("body ").append( coco_qstring_create(t->val) )); .)
+			} 	(. f->setBody( l );errors->m_com->out( QString("end of body") ); .)
 			.
 			
 /*------------------------------------------------------------------------*/
-FunctionDecl = ParameterDecl 
+FunctionDecl<QString name> = 	(. TSFunction *f = new TSFunction(); f->setName( name ); .)
+			ParameterDecl<f> 
 			"->" 
-			FunctionBody (. errors->m_com->out( QString( "end of function") ); .)
+			FunctionBody<f> (. errors->m_com->out( QString( "end of function") );
+							   data->addFunction( f ); .)
 			.
 
 /*------------------------------------------------------------------------*/
-ObjectMemDecl = 		(. QString current; .)
-				ident	(. errors->m_com->out( QString( "it's an ts object member") ); .)
+ObjectMemDecl<TSObject* o> = 		(. QString* current = new QString(); .)
+				ident				(. QString name = coco_qstring_create(t->val);
+									   errors->m_com->out( QString( "it's an ts object member") ); .)
 				":" 
 				( 
-				ident 
-				| String<current> 
-				) 
+				ident 				(. *current = coco_qstring_create(t->val); .)
+				| String<current>   
+				) 					(. o->addMemberWithValue( name, *current ); delete current; .)
 				.
 
 /*------------------------------------------------------------------------*/
-ObjectDecl = "{" 			(. errors->m_com->out( QString( "it's an ts object") ); .)
+ObjectDecl<QString name> =  (. TSObject* o = new TSObject(name); .)
+			"{" 			(. errors->m_com->out( QString( "it's an ts object") ); .)
 			{ 
-			{intent} ObjectMemDecl 
+			{intent} ObjectMemDecl<o> 
 			} 
-			"}" 			(. errors->m_com->out( QString( "end of ts object") ); .)
+			"}" 			(. data->addObject( o );errors->m_com->out( QString( "end of ts object") ); .)
 			.
 
 /*------------------------------------------------------------------------*/
 Object = ident (. QString name = coco_qstring_create( t->val ); .)
 		"=" 
 		( VariableDecl<name> (. errors->m_com->out( QString( "was a variable") ); .)
-		| FunctionDecl (. errors->m_com->out( QString( "was a function") ); .)
-		| ObjectDecl   (. errors->m_com->out( QString( "was a ts object") ); .)
+		| FunctionDecl<name> (. errors->m_com->out( QString( "was a function") ); .)
+		| ObjectDecl<name>   (. errors->m_com->out( QString( "was a ts object") ); .)
 		) .
 
 /*------------------------------------------------------------------------*/

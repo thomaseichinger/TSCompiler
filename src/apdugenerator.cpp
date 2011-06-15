@@ -1,14 +1,24 @@
 #include "apdugenerator.h"
-#include "opcodetable.h"
+#include "tsdata.h"
 #include <iostream>
 
-ApduGenerator::ApduGenerator( OpcodeTable* table )
-    : m_table( table )
+ApduGenerator::ApduGenerator( TSData* data )
+    : m_data( data )
 {
 }
 
 ApduGenerator::~ApduGenerator()
 {
+}
+
+void ApduGenerator::generate()
+{
+
+}
+
+QString ApduGenerator::apdu()
+{
+    return m_apdu;
 }
 
 void ApduGenerator::append( unsigned char opcode )
@@ -31,5 +41,5 @@ void ApduGenerator::printApdu()
 
 std::string ApduGenerator::apdu()
 {
-    return m_apdu;
+    return m_apdu.toStdString();
 }

@@ -3,13 +3,15 @@
 
 #include <string>
 
-class OpcodeTable;
+class TSData;
 
 class ApduGenerator
 {
 public:
-    ApduGenerator( OpcodeTable* table );
+    ApduGenerator( TSData* data );
     ~ApduGenerator();
+
+    void generate();
     
     void append( unsigned char opcode );
     void append( std::string );
@@ -18,8 +20,8 @@ public:
     std::string apdu();
     
 private:
-    OpcodeTable* m_table;
-    std::string m_apdu;
+    TSData* m_data;
+    QString m_apdu;
 };
 
 
