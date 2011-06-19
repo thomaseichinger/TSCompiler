@@ -29,17 +29,12 @@ void ApduGenerator::append( unsigned char opcode )
 
 void ApduGenerator::append( std::string field )
 {
-    m_apdu.append( field );
+    m_apdu.append( QString::fromStdString(field) );
     return;
 }
 
 void ApduGenerator::printApdu()
 {
-    std::cout << m_apdu << std::endl;
+    std::cout << m_apdu.toStdString() << std::endl;
     return;
-}
-
-std::string ApduGenerator::apdu()
-{
-    return m_apdu.toStdString();
 }
