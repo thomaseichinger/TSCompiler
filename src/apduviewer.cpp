@@ -9,6 +9,14 @@ ApduViewer::ApduViewer(QWidget *parent) :
 {
     resize(320, 240);
     setWindowTitle(QApplication::translate("toplevel", "TSCompiler APDU Viewer"));
+
+    m_fileSel = new QLineEdit( this );
+    QPushButton *fileButton = new QPushButton( this );
+    QHBoxLayout *fileLayout = new QHBoxLayout(  );
+    fileLayout->addWidget(m_fileSel);
+    fileLayout->addWidget(fileButton);
+    fileLayout->setObjectName(QString("fileLayout"));
+
     QLabel *label = new QLabel(QApplication::translate("windowlayout", "Compiled APDU:"));
     m_textEdit = new QTextEdit( this );
     m_textEdit->setReadOnly( true );
@@ -18,15 +26,27 @@ ApduViewer::ApduViewer(QWidget *parent) :
     connect(copyButton,SIGNAL(clicked()),this,SLOT(copyToClipboard()));
 
     QVBoxLayout *layout = new QVBoxLayout();
+    layout->setObjectName(QString("layout"));
+    layout->addLayout(fileLayout);
     layout->addWidget(label);
     layout->addWidget(m_textEdit);
     layout->addWidget(copyButton);
     setLayout(layout);
+
+    connect(fileButton,SIGNAL(clicked()), this,SLOT(openFileDialog()));
+    //connect(this,SIGNAL(fileSelected(QString)),filesel,SLOT(setText(QString)));
 }
 
 ApduViewer::~ApduViewer()
 {
 
+}
+
+void ApduViewer::openFileDialog()
+{
+    QFileDialog *d = new QFileDialog(this);
+    d->show();
+    connect(d,SIGNAL(fileSelected(QString)),m_fileSel,SLOT(setText(QString)));
 }
 
 void ApduViewer::setApduText( std::string apdu )
