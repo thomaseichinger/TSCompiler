@@ -1,7 +1,7 @@
 #ifndef APDUGENERATOR_H
 #define APDUGENERATOR_H
 
-#include <QString>
+#include <string>
 
 class TSData;
 
@@ -17,8 +17,7 @@ public:
     void append( std::string );
 
     void printApdu();
-    QString apdu();
-
+    std::string apdu();
     
 private:
     TSData* m_data;

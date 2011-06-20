@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
         if (argc == 2) {
 		wchar_t *fileName = coco_string_create(argv[1]);
 		Scanner *scanner = new Scanner(fileName);
+                ApduGenerator* gen = new ApduGenerator( new OpcodeTable );
                 TSData* tsdata = new TSData();
-                ApduGenerator* gen = new ApduGenerator( tsdata );
                 Parser *parser = new Parser(scanner, tsdata, com);
 		
 		parser->Parse();
