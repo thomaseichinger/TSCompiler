@@ -1,8 +1,16 @@
- TrivialScript 0.1
+TrivialScript 0.1
+
+// single line comment
+/* multi
+	line
+comment */
+
+## single line comment
 
 testname = "here comes a string"
 variable = testname
 varnum = 12300
+testname += " and another"
 
 /* comment */
 function = ( para1, para2 ) -> body 
