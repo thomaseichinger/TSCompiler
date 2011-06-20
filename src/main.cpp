@@ -16,49 +16,23 @@
 
 int main(int argc, char *argv[])
 {
-        std::string apdu = "b8 aa 00 00 Opcode Hexes come here";
         QApplication app( argc, argv );
 
-        ApduViewer viewer;
-        TSCommunicator* com = new TSCommunicator( &viewer );
+        TSCommunicator com;
+        ApduViewer viewer( &com );
+        com.setGui( &viewer );
+        com.setDebug(false);
 
         if (argc == 2) {
-		wchar_t *fileName = coco_string_create(argv[1]);
-		Scanner *scanner = new Scanner(fileName);
-                TSData* tsdata = new TSData();
-                ApduGenerator* gen = new ApduGenerator( tsdata );
-                Parser *parser = new Parser(scanner, tsdata, com);
-		
-		parser->Parse();
-		
-		if (parser->errors->count == 0) 
-		{
-                        com->out( QString("Valid TrivialScript Syntax") );
-                        viewer.setApduText( gen->apdu() );
-                        com->out( tsdata->dumpDataStructures() );
-                        viewer.show();
-		}
-                else
-                {
-                    com->error( QString().append("%1 Errors occured")
-                                         .arg(parser->errors->count)
-                               );
-                    viewer.show();
-                }
-
-                coco_string_delete(fileName);
-                delete gen;
-		delete parser;
-		delete scanner;
-                delete tsdata;
+                viewer.setFileName(QString(argv[1]));
+                viewer.run();
+                viewer.show();
 	} 
-	else
-		
+        else
 	{
-                com->error( QString("No source file specified\n") );
-	}
-
-        delete com;
+                com.error( QString("No source file specified\n") );
+                viewer.show();
+        }
 
     return app.exec();
 }

@@ -104,12 +104,12 @@ void Parser::VariableDecl(QString name) {
 			Get();
 			*current = coco_qstring_create(t->val);data->addVariableWithValue( name, *current ); 
 		} else SynErr(18);
-		(current->isEmpty())?errors->m_com->out(QString("no val for %1").arg(name)):errors->m_com->out( name + "=" + *current ); 
+		(current->isEmpty())?errors->m_com->debugMsg(QString("no val for %1").arg(name)):errors->m_com->debugMsg( name + "=" + *current ); 
 		delete current; 
 }
 
 void Parser::VariableConcenate(QString name) {
-		QString* current = new QString();errors->m_com->out(QString("in concenate")); 
+		QString* current = new QString();errors->m_com->debugMsg(QString("in concenate")); 
 		if (la->kind == 1) {
 			Get();
 			*current = coco_qstring_create(t->val);
@@ -125,7 +125,7 @@ void Parser::VariableConcenate(QString name) {
 			Get();
 			*current = coco_qstring_create(t->val);data->addVariableWithValue( name, data->variableValue(name) + *current ); 
 		} else SynErr(19);
-		(current->isEmpty())?errors->m_com->out(QString("no val for %1").arg(name)):errors->m_com->out( name + "=" + data->variableValue(name) );
+		(current->isEmpty())?errors->m_com->debugMsg(QString("no val for %1").arg(name)):errors->m_com->debugMsg( name + "=" + data->variableValue(name) );
 		delete current; 
 }
 
@@ -151,14 +151,14 @@ void Parser::ParameterDecl(TSFunction* f) {
 void Parser::FunctionBody(TSFunction* f) {
 		QStringList l; 
 		Expect(1);
-		l << coco_qstring_create(t->val);errors->m_com->out( QString("body") ); 
+		l << coco_qstring_create(t->val);errors->m_com->debugMsg( QString("body") ); 
 		while (la->kind == 4) {
 			Get();
-			errors->m_com->out( QString("body tab") ); 
+			errors->m_com->debugMsg( QString("body tab") ); 
 			Expect(1);
-			l << coco_qstring_create(t->val);errors->m_com->out( QString("body ").append( coco_qstring_create(t->val) )); 
+			l << coco_qstring_create(t->val);errors->m_com->debugMsg( QString("body ").append( coco_qstring_create(t->val) )); 
 		}
-		f->setBody( l );errors->m_com->out( QString("end of body") ); 
+		f->setBody( l );errors->m_com->debugMsg( QString("end of body") ); 
 }
 
 void Parser::FunctionDecl(QString name) {
@@ -166,7 +166,7 @@ void Parser::FunctionDecl(QString name) {
 		ParameterDecl(f);
 		Expect(10);
 		FunctionBody(f);
-		errors->m_com->out( QString( "end of function") );
+		errors->m_com->debugMsg( QString( "end of function") );
 		data->addFunction( f ); 
 }
 
@@ -174,7 +174,7 @@ void Parser::ObjectMemDecl(TSObject* o) {
 		QString* current = new QString(); 
 		Expect(1);
 		QString name = coco_qstring_create(t->val);
-		errors->m_com->out( QString( "it's an ts object member") ); 
+		errors->m_com->debugMsg( QString( "it's an ts object member") ); 
 		Expect(11);
 		if (la->kind == 1) {
 			Get();
@@ -188,7 +188,7 @@ void Parser::ObjectMemDecl(TSObject* o) {
 void Parser::ObjectDecl(QString name) {
 		TSObject* o = new TSObject(name); 
 		Expect(12);
-		errors->m_com->out( QString( "it's an ts object") ); 
+		errors->m_com->debugMsg( QString( "it's an ts object") ); 
 		while (la->kind == 1 || la->kind == 4) {
 			while (la->kind == 4) {
 				Get();
@@ -196,7 +196,7 @@ void Parser::ObjectDecl(QString name) {
 			ObjectMemDecl(o);
 		}
 		Expect(13);
-		data->addObject( o );errors->m_com->out( QString( "end of ts object") ); 
+		data->addObject( o );errors->m_com->debugMsg( QString( "end of ts object") ); 
 }
 
 void Parser::Object() {
@@ -206,13 +206,13 @@ void Parser::Object() {
 			Get();
 			if (StartOf(2)) {
 				VariableDecl(name);
-				errors->m_com->out( QString( "was a variable") ); 
+				errors->m_com->debugMsg( QString( "was a variable") ); 
 			} else if (la->kind == 7) {
 				FunctionDecl(name);
-				errors->m_com->out( QString( "was a function") ); 
+				errors->m_com->debugMsg( QString( "was a function") ); 
 			} else if (la->kind == 12) {
 				ObjectDecl(name);
-				errors->m_com->out( QString( "was a ts object") ); 
+				errors->m_com->debugMsg( QString( "was a ts object") ); 
 			} else SynErr(23);
 		} else if (la->kind == 15) {
 			Get();
