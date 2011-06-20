@@ -29,9 +29,12 @@ public:
 
     QString dumpDataStructures();
 
+    void generate();
+
     QString m_currentIdent;
 
 private:
+    QStringList inflate(QStringList);
     QMap<QString,QString> m_variableMap;
     QList<TSFunction*> m_functionList;
     QList<TSObject*> m_objectList;

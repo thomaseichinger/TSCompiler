@@ -15,6 +15,27 @@ TSData::~TSData()
     }
 }
 
+void TSData::generate()
+{
+    QList<TSFunction*>::const_iterator iter = m_functionList.constBegin();
+    QList<TSFunction*>::const_iterator end = m_functionList.constEnd();
+    TSFunction* f;
+    while (iter != end )
+    {
+        f = *iter;
+        if (f->name() == QString("PROZESS"))
+            break;
+        ++iter;
+    }
+    QStringList inflated = inflate(f->body());
+
+}
+
+QStringList TSData::inflate( QStringList body )
+{
+    return body;
+}
+
 bool TSData::variable(QString name)
 {
     return m_variableMap.contains( name );
