@@ -1,7 +1,7 @@
 #ifndef APDUGENERATOR_H
 #define APDUGENERATOR_H
 
-#include <string>
+#include <QString>
 
 class TSData;
 
@@ -13,11 +13,11 @@ public:
 
     void generate();
     
-    void append( unsigned char opcode );
-    void append( std::string );
+    void append( QChar opcode );
+    void append( QString );
 
     void printApdu();
-    std::string apdu();
+    QString apdu();
     
 private:
     TSData* m_data;

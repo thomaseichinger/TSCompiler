@@ -103,8 +103,29 @@ void Parser::VariableDecl(QString name) {
 		} else if (la->kind == 3) {
 			Get();
 			*current = coco_qstring_create(t->val);data->addVariableWithValue( name, *current ); 
-		} else SynErr(17);
+		} else SynErr(18);
 		(current->isEmpty())?errors->m_com->out(QString("no val for %1").arg(name)):errors->m_com->out( name + "=" + *current ); 
+		delete current; 
+}
+
+void Parser::VariableConcenate(QString name) {
+		QString* current = new QString();errors->m_com->out(QString("in concenate")); 
+		if (la->kind == 1) {
+			Get();
+			*current = coco_qstring_create(t->val);
+			(data->variable(*current)) ? data->addVariableWithValue( name, data->variableValue(name) + data->variableValue(*current) ) : errors->Error(QString("Variable %1 not specified in this scope.").arg(*current));
+			
+		} else if (la->kind == 0 || la->kind == 1 || la->kind == 5) {
+			String(current);
+			data->addVariableWithValue( name, data->variableValue(name) + *current ); 
+		} else if (la->kind == 2) {
+			Get();
+			*current = coco_qstring_create(t->val);data->addVariableWithValue( name, data->variableValue(name) + *current ); 
+		} else if (la->kind == 3) {
+			Get();
+			*current = coco_qstring_create(t->val);data->addVariableWithValue( name, data->variableValue(name) + *current ); 
+		} else SynErr(19);
+		(current->isEmpty())?errors->m_com->out(QString("no val for %1").arg(name)):errors->m_com->out( name + "=" + data->variableValue(name) );
 		delete current; 
 }
 
@@ -119,11 +140,11 @@ void Parser::ParameterDecl(TSFunction* f) {
 					Get();
 				} else if (la->kind == 9) {
 					Get();
-				} else SynErr(18);
+				} else SynErr(20);
 			}
 		} else if (la->kind == 9) {
 			Get();
-		} else SynErr(19);
+		} else SynErr(21);
 		f->setParameters( l ); 
 }
 
@@ -160,7 +181,7 @@ void Parser::ObjectMemDecl(TSObject* o) {
 			*current = coco_qstring_create(t->val); 
 		} else if (StartOf(1)) {
 			String(current);
-		} else SynErr(20);
+		} else SynErr(22);
 		o->addMemberWithValue( name, *current ); delete current; 
 }
 
@@ -181,21 +202,26 @@ void Parser::ObjectDecl(QString name) {
 void Parser::Object() {
 		Expect(1);
 		QString name = coco_qstring_create( t->val ); 
-		Expect(14);
-		if (StartOf(2)) {
-			VariableDecl(name);
-			errors->m_com->out( QString( "was a variable") ); 
-		} else if (la->kind == 7) {
-			FunctionDecl(name);
-			errors->m_com->out( QString( "was a function") ); 
-		} else if (la->kind == 12) {
-			ObjectDecl(name);
-			errors->m_com->out( QString( "was a ts object") ); 
-		} else SynErr(21);
+		if (la->kind == 14) {
+			Get();
+			if (StartOf(2)) {
+				VariableDecl(name);
+				errors->m_com->out( QString( "was a variable") ); 
+			} else if (la->kind == 7) {
+				FunctionDecl(name);
+				errors->m_com->out( QString( "was a function") ); 
+			} else if (la->kind == 12) {
+				ObjectDecl(name);
+				errors->m_com->out( QString( "was a ts object") ); 
+			} else SynErr(23);
+		} else if (la->kind == 15) {
+			Get();
+			VariableConcenate(name);
+		} else SynErr(24);
 }
 
 void Parser::TSCompiler() {
-		Expect(15);
+		Expect(16);
 		VersionNum();
 		while (la->kind == 1) {
 			Object();
@@ -214,7 +240,7 @@ void Parser::Parse() {
 }
 
 Parser::Parser(Scanner *scanner, TSData* d, TSCommunicator* com) : data(d) {
-	maxT = 16;
+	maxT = 17;
 
 	dummyToken = NULL;
 	t = la = NULL;
@@ -228,10 +254,10 @@ bool Parser::StartOf(int s) {
 	const bool T = true;
 	const bool x = false;
 
-	static bool set[3][18] = {
-		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, T,T,x,x, x,x,x,x, x,T,x,x, x,x},
-		{T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x}
+	static bool set[3][19] = {
+		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,x,x, T,T,x,x, x,x,x,x, x,T,x,x, x,x,x},
+		{T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x}
 	};
 
 
@@ -266,13 +292,16 @@ void Errors::SynErr(int line, int col, int n) {
 			case 12: s = coco_string_create(L"\"{\" expected"); break;
 			case 13: s = coco_string_create(L"\"}\" expected"); break;
 			case 14: s = coco_string_create(L"\"=\" expected"); break;
-			case 15: s = coco_string_create(L"\"TrivialScript\" expected"); break;
-			case 16: s = coco_string_create(L"??? expected"); break;
-			case 17: s = coco_string_create(L"invalid VariableDecl"); break;
-			case 18: s = coco_string_create(L"invalid ParameterDecl"); break;
-			case 19: s = coco_string_create(L"invalid ParameterDecl"); break;
-			case 20: s = coco_string_create(L"invalid ObjectMemDecl"); break;
-			case 21: s = coco_string_create(L"invalid Object"); break;
+			case 15: s = coco_string_create(L"\"+=\" expected"); break;
+			case 16: s = coco_string_create(L"\"TrivialScript\" expected"); break;
+			case 17: s = coco_string_create(L"??? expected"); break;
+			case 18: s = coco_string_create(L"invalid VariableDecl"); break;
+			case 19: s = coco_string_create(L"invalid VariableConcenate"); break;
+			case 20: s = coco_string_create(L"invalid ParameterDecl"); break;
+			case 21: s = coco_string_create(L"invalid ParameterDecl"); break;
+			case 22: s = coco_string_create(L"invalid ObjectMemDecl"); break;
+			case 23: s = coco_string_create(L"invalid Object"); break;
+			case 24: s = coco_string_create(L"invalid Object"); break;
 
 		default:
 		{

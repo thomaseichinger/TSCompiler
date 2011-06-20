@@ -70,6 +70,7 @@ public:
 	void VersionNum();
 	void String(QString *current);
 	void VariableDecl(QString name);
+	void VariableConcenate(QString name);
 	void ParameterDecl(TSFunction* f);
 	void FunctionBody(TSFunction* f);
 	void FunctionDecl(QString name);

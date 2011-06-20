@@ -21,13 +21,13 @@ QString ApduGenerator::apdu()
     return m_apdu;
 }
 
-void ApduGenerator::append( unsigned char opcode )
+void ApduGenerator::append( QChar opcode )
 {
-    //m_apdu.append( opcode );
+    m_apdu.append( opcode );
     return;
 }
 
-void ApduGenerator::append( std::string field )
+void ApduGenerator::append( QString field )
 {
     m_apdu.append( field );
     return;
@@ -35,11 +35,6 @@ void ApduGenerator::append( std::string field )
 
 void ApduGenerator::printApdu()
 {
-    std::cout << m_apdu << std::endl;
+    std::cout << m_apdu.toStdString() << std::endl;
     return;
-}
-
-std::string ApduGenerator::apdu()
-{
-    return m_apdu.toStdString();
 }

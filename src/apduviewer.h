@@ -2,6 +2,7 @@
 #define APDUVIEWER_H
 
 #include <QWidget>
+#include <QString>
 
 class QTextEdit;
 
@@ -12,7 +13,7 @@ public:
     explicit ApduViewer(QWidget *parent = 0);
     ~ApduViewer();
 
-    void setApduText( std::string apdu );
+    void setApduText( QString apdu );
 
 signals:
 

@@ -424,8 +424,8 @@ Scanner::~Scanner() {
 void Scanner::Init() {
 	EOL    = '\n';
 	eofSym = 0;
-	maxT = 16;
-	noSym = 16;
+	maxT = 17;
+	noSym = 17;
 	int i;
 	for (i = 65; i <= 90; ++i) start.set(i, 1);
 	for (i = 97; i <= 122; ++i) start.set(i, 1);
@@ -442,8 +442,9 @@ void Scanner::Init() {
 	start.set(123, 16);
 	start.set(125, 17);
 	start.set(61, 18);
+	start.set(43, 19);
 		start.set(Buffer::EoF, -1);
-	keywords.set(L"TrivialScript", 15);
+	keywords.set(L"TrivialScript", 16);
 
 
 	tvalLength = 128;
@@ -700,6 +701,12 @@ Token* Scanner::NextToken() {
 			{t->kind = 13; break;}
 		case 18:
 			{t->kind = 14; break;}
+		case 19:
+			if (ch == L'=') {AddCh(); goto case_20;}
+			else {goto case_0;}
+		case 20:
+			case_20:
+			{t->kind = 15; break;}
 
 	}
 	AppendVal(t);

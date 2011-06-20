@@ -64,6 +64,17 @@ VariableDecl<QString name> = (. QString* current = new QString(); .)
 			.
 
 /*------------------------------------------------------------------------*/
+VariableConcenate<QString name> = 	(. QString* current = new QString();errors->m_com->out(QString("in concenate")); .)
+			( ident				  	(. *current = coco_qstring_create(t->val);
+									   (data->variable(*current)) ? data->addVariableWithValue( name, data->variableValue(name) + data->variableValue(*current) ) : errors->Error(QString("Variable %1 not specified in this scope.").arg(*current));
+									.)
+			| String<current> 	(. data->addVariableWithValue( name, data->variableValue(name) + *current ); .)
+			| number 			(. *current = coco_qstring_create(t->val);data->addVariableWithValue( name, data->variableValue(name) + *current ); .)
+			| hexnumber 		(. *current = coco_qstring_create(t->val);data->addVariableWithValue( name, data->variableValue(name) + *current ); .)
+			)					(. (current->isEmpty())?errors->m_com->out(QString("no val for %1").arg(name)):errors->m_com->out( name + "=" + data->variableValue(name) );
+								   delete current; .)
+			.
+/*------------------------------------------------------------------------*/
 ParameterDecl<TSFunction* f> = 	(. QStringList l; .)
 			"(" ( 
 			{ 
@@ -111,11 +122,15 @@ ObjectDecl<QString name> =  (. TSObject* o = new TSObject(name); .)
 
 /*------------------------------------------------------------------------*/
 Object = ident (. QString name = coco_qstring_create( t->val ); .)
-		"=" 
-		( VariableDecl<name> (. errors->m_com->out( QString( "was a variable") ); .)
-		| FunctionDecl<name> (. errors->m_com->out( QString( "was a function") ); .)
-		| ObjectDecl<name>   (. errors->m_com->out( QString( "was a ts object") ); .)
-		) .
+		( "=" 
+			( VariableDecl<name> (. errors->m_com->out( QString( "was a variable") ); .)
+			| FunctionDecl<name> (. errors->m_com->out( QString( "was a function") ); .)
+			| ObjectDecl<name>   (. errors->m_com->out( QString( "was a ts object") ); .)
+			)
+		| "+="
+			VariableConcenate<name>
+		)
+		.	
 
 /*------------------------------------------------------------------------*/
 TSCompiler

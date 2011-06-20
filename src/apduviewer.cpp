@@ -29,11 +29,11 @@ ApduViewer::~ApduViewer()
 
 }
 
-void ApduViewer::setApduText( std::string apdu )
+void ApduViewer::setApduText( QString apdu )
 {
-    ApduViewer::append( QString().fromStdString(apdu) );
+    ApduViewer::append( apdu );
     m_apduIsSet = true;
-    m_apdu = apdu.c_str();
+    m_apdu = apdu;
     return;
 }
 
